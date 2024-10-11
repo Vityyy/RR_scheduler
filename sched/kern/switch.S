@@ -9,6 +9,17 @@
 
 .globl context_switch;
 context_switch:
+    popl %esp
+
+    popal
+    popl %es
+    popl %ds
+
+    addl $8, %esp
+
+    iret
+
+    /* pop adicional con excepciones? */
 
 spin:
 	jmp spin
