@@ -11,6 +11,7 @@ void sched_halt(void);
 void
 sched_yield(void)
 {
+#define SCHED_ROUND_ROBIN
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -28,6 +29,37 @@ sched_yield(void)
 	// below to halt the cpu.
 
 	// Your code here - Round robin
+
+	int currentIndex = 0;
+	while (currentIndex < NENV) {
+		if (&envs[currentIndex] == curenv)
+			break;
+
+		++currentIndex;
+	}
+
+	++currentIndex;
+	bool found = false;
+	while (currentIndex < NENV && !found) {
+		if (envs[currentIndex].env_status == ENV_RUNNABLE) {
+			curenv = &envs[currentIndex];
+			found = true;
+		}
+		currentIndex++;
+	}
+
+	int i = 0;
+	while (i < currentIndex && !found) {
+		if (envs[i].env_status == ENV_RUNNABLE) {
+			curenv = &envs[i];
+			found = true;
+		}
+		currentIndex++;
+	}
+
+	if (!found && curenv->env_status != ENV_RUNNING)
+		curenv = NULL;
+
 #endif
 
 #ifdef SCHED_PRIORITIES
