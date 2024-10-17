@@ -78,3 +78,9 @@ TRAPHANDLER_NOEC(trap48, T_SYSCALL)
  * Your code here for _alltraps
  */
 _alltraps:
+    push %ds
+    push %es
+    pusha
+
+    push %esp
+    call trap
