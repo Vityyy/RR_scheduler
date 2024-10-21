@@ -78,9 +78,18 @@ TRAPHANDLER_NOEC(trap48, T_SYSCALL)
  * Your code here for _alltraps
  */
 _alltraps:
-    push %ds
-    push %es
-    pusha
 
-    push %esp
-    call trap
+	# first, the cpu saves in the kernel stack of A the values of: ss, esp, eflags, cs, eip
+	# A = the user program that was executing and was interrupted
+	# then (above), we save an error code (0 for no error) and the trap number
+
+	# we must save as well:
+
+    push %ds			# the value of ds
+    push %es			# the value of es
+    pusha				# the values of the general purpose registers
+
+	# now the trapframe is embedded in the stack, so esp points to the trapframe!
+
+    push %esp			# we have to push trap()'s argument onto the stack, and that is the content of esp
+    call trap			# now we can call trap()

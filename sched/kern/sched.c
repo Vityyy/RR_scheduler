@@ -7,11 +7,22 @@
 
 void sched_halt(void);
 
+#ifdef SCHED_ROUND_ROBIN
+int get_curenv_idx() {
+	int i = 0;
+	while (i < NENV) {
+		if (&envs[i] == curenv)
+			break;
+		++i;
+	}
+	return i;
+}
+#endif
+
 // Choose a user environment to run and run it.
 void
 sched_yield(void)
 {
-#define SCHED_ROUND_ROBIN
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -30,35 +41,38 @@ sched_yield(void)
 
 	// Your code here - Round robin
 
-	int currentIndex = 0;
-	while (currentIndex < NENV) {
-		if (&envs[currentIndex] == curenv)
-			break;
-
-		++currentIndex;
-	}
-
-	++currentIndex;
-	bool found = false;
-	while (currentIndex < NENV && !found) {
-		if (envs[currentIndex].env_status == ENV_RUNNABLE) {
-			curenv = &envs[currentIndex];
-			found = true;
-		}
-		currentIndex++;
-	}
-
+	int curenv_idx = -1;
 	int i = 0;
-	while (i < currentIndex && !found) {
-		if (envs[i].env_status == ENV_RUNNABLE) {
-			curenv = &envs[i];
-			found = true;
-		}
-		currentIndex++;
+	struct Env *chosen = NULL;
+	bool found = false;
+
+	if (curenv) {
+		curenv_idx = get_curenv_idx();
+		if (curenv_idx != NENV - 1)
+			i = curenv_idx + 1;
+		else
+			curenv_idx = -1; // to avoid looping twice
 	}
 
-	if (!found && curenv->env_status != ENV_RUNNING)
-		curenv = NULL;
+	while (i < NENV && !found) {
+		if (envs[i].env_status == ENV_RUNNABLE) {
+			chosen = &envs[i];
+			found = true;
+		}
+		++i;
+	}
+
+	i = 0;
+	while (i < curenv_idx && !found) {
+		if (envs[i].env_status == ENV_RUNNABLE) {
+			chosen = &envs[i];
+			found = true;
+		}
+		++i;
+	}
+
+	if (!found && curenv && curenv->env_status == ENV_RUNNING)
+		chosen = curenv;
 
 #endif
 
@@ -75,12 +89,16 @@ sched_yield(void)
 #endif
 
 	// Without scheduler, keep runing the last environment while it exists
-	if (curenv) {
-		env_run(curenv);
-	}
+	// if (curenv) {
+	// 	env_run(curenv);
+	// }
 
-	// sched_halt never returns
-	sched_halt();
+	if (chosen) {
+		env_run(chosen);
+	} else {
+		// sched_halt never returns
+		sched_halt();
+	}
 }
 
 // Halt this CPU when there is nothing to do. Wait until the
