@@ -78,6 +78,7 @@ sched_yield(void)
 
 #endif
 
+#define SCHED_PRIORITIES
 #ifdef SCHED_PRIORITIES
 		// Implement simple priorities scheduling.
 		//
@@ -88,6 +89,13 @@ sched_yield(void)
 		// environment is selected and run every time.
 
 		// Your code here - Priorities
+
+        struct Env *chosen = NULL;
+        int highest_priority = -1;
+
+
+
+
 #endif
 
 	// Without scheduler, keep runing the last environment while it exists
@@ -95,12 +103,11 @@ sched_yield(void)
 	// 	env_run(curenv);
 	// }
 
-	if (chosen) {
-		env_run(chosen);
-	} else {
-		// sched_halt never returns
-		sched_halt();
-	}
+	if (chosen)
+		env_run(chosen); // never returns
+
+    // sched_halt never returns
+    sched_halt();
 }
 
 // Halt this CPU when there is nothing to do. Wait until the
