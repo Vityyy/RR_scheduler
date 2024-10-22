@@ -511,10 +511,10 @@ env_run(struct Env *e)
 	//	e->env_tf to sensible values.
 	// Your code here
 
-    if (curenv && curenv->env_status == ENV_RUNNING)
-        curenv->env_status = ENV_RUNNABLE;
+	if (curenv && curenv->env_status == ENV_RUNNING)
+		curenv->env_status = ENV_RUNNABLE;
 
-    curenv = e;
+	curenv = e;
 	curenv->env_status = ENV_RUNNING;
 	curenv->env_runs++;
 	env_load_pgdir(curenv);

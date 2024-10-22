@@ -8,7 +8,9 @@
 void sched_halt(void);
 
 #ifdef SCHED_ROUND_ROBIN
-int get_curenv_idx() {
+int
+get_curenv_idx()
+{
 	int i = 0;
 	while (i < NENV) {
 		if (&envs[i] == curenv)
@@ -51,7 +53,7 @@ sched_yield(void)
 		if (curenv_idx != NENV - 1)
 			i = curenv_idx + 1;
 		else
-			curenv_idx = -1; // to avoid looping twice
+			curenv_idx = -1;  // to avoid looping twice
 	}
 
 	while (i < NENV && !found) {
@@ -77,15 +79,15 @@ sched_yield(void)
 #endif
 
 #ifdef SCHED_PRIORITIES
-	// Implement simple priorities scheduling.
-	//
-	// Environments now have a "priority" so it must be consider
-	// when the selection is performed.
-	//
-	// Be careful to not fall in "starvation" such that only one
-	// environment is selected and run every time.
+		// Implement simple priorities scheduling.
+		//
+		// Environments now have a "priority" so it must be consider
+		// when the selection is performed.
+		//
+		// Be careful to not fall in "starvation" such that only one
+		// environment is selected and run every time.
 
-	// Your code here - Priorities
+		// Your code here - Priorities
 #endif
 
 	// Without scheduler, keep runing the last environment while it exists
