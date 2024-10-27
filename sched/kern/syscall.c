@@ -437,13 +437,12 @@ sys_env_get_prior(void)
 }
 
 static int32_t
-sys_env_set_prior(uint32_t prior)
+sys_env_set_prior(uint32_t new_prior)
 {
-	uint32_t curr_prior = sys_env_get_prior();
-	if (curr_prior < curenv->env_priority)
+	if (new_prior > curenv->env_priority)
 		return -E_INVAL;
 
-	curenv->env_priority = prior;
+	curenv->env_priority = new_prior;
 	return 0;
 }
 

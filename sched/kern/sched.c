@@ -102,7 +102,7 @@ sched_yield(void)
 	uint32_t curenv_priority = 0;
 	if (curenv && curenv->env_tf.tf_trapno == IRQ_OFFSET + IRQ_TIMER) {
 		if (curenv->env_status == ENV_RUNNABLE && curenv->env_priority != 1)
-			curenv->env_priority = curenv->env_priority - 1;
+			curenv->env_priority--;
 	}
 
 	struct Env *chosen = NULL;
