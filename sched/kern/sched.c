@@ -129,20 +129,22 @@ sched_yield(void) {
 		}
 	}
 
+	bool found = false;
+
 	if (curenv != NULL) {
-		for (int i = get_curenv_idx() + 1; i < NENV; i++) {
+		for (int i = get_curenv_idx() + 1 && !found; i < NENV; i++) {
 			if (envs[i].env_status == ENV_RUNNABLE &&
 			    envs[i].env_priority == highest_priority) {
 				chosen = &envs[i];
-				break;
+				found = true;
 			}
 		}
 
-		for (int i = 0; i < get_curenv_idx() + 1; i++) {
+		for (int i = 0; i < get_curenv_idx() + 1 && !found; i++) {
 			if (envs[i].env_status == ENV_RUNNABLE &&
 			    envs[i].env_priority == highest_priority) {
 				chosen = &envs[i];
-				break;
+				found = true;
 			}
 		}
 	}
@@ -230,11 +232,7 @@ sched_halt(void) {
 
 	// Once the scheduler has finishied it's work, print statistics on
 	// performance. Your code here
-#ifdef SCHED_PRIORITIES
-	for (int j = 0; j < total_runs; j++)
-		cprintf("env_id: %d, runs: %d\n", env_runs[j].env_id, env_runs[j].runs);
-	cprintf("Sched calls: %d\n", cicle_count);
-#endif
+
 
 	// Reset stack pointer, enable interrupts and then halt.
 	asm volatile("movl $0, %%ebp\n"
