@@ -19,7 +19,8 @@ uint32_t total_runs = 0;
 void sched_halt(void);
 
 int
-env_runs_get_env_idx(struct Env* env) {
+env_runs_get_env_idx(struct Env *env)
+{
 	int i = 0;
 	while (i < NENV) {
 		if (env_runs[i].env_id == env->env_id)
@@ -30,7 +31,8 @@ env_runs_get_env_idx(struct Env* env) {
 }
 
 int
-get_curenv_idx() {
+get_curenv_idx()
+{
 	int i = 0;
 	while (i < NENV) {
 		if (&envs[i] == curenv)
@@ -42,7 +44,8 @@ get_curenv_idx() {
 
 // Choose a user environment to run and run it.
 void
-sched_yield(void) {
+sched_yield(void)
+{
 #ifdef SCHED_ROUND_ROBIN
 	// Implement simple round-robin scheduling.
 	//
@@ -95,7 +98,7 @@ sched_yield(void) {
 		chosen = curenv;
 
 #endif
-	//#define SCHED_PRIORITIES
+		// #define SCHED_PRIORITIES
 #ifdef SCHED_PRIORITIES
 	// Implement simple priorities scheduling.
 	//
@@ -119,7 +122,7 @@ sched_yield(void) {
 			curenv->env_priority--;
 	}
 
-	struct Env* chosen = NULL;
+	struct Env *chosen = NULL;
 	uint32_t highest_priority = 1;
 
 	for (int i = 0; i < NENV; i++) {
@@ -147,8 +150,7 @@ sched_yield(void) {
 				found = true;
 			}
 		}
-	}
-	else {
+	} else {
 		for (int i = 0; i < NENV; i++) {
 			if (envs[i].env_status == ENV_RUNNABLE &&
 			    envs[i].env_priority == highest_priority) {
@@ -174,11 +176,11 @@ sched_yield(void) {
 			++total_runs;
 		}
 
-		env_run(chosen); // never returns
+		env_run(chosen);  // never returns
 	}
 #elif SCHED_ROUND_ROBIN
 	if (chosen)
-		env_run(chosen); // never returns
+		env_run(chosen);  // never returns
 #else
 	// Without scheduler, keep runing the last environment while it exists
 	if (curenv)
@@ -194,7 +196,8 @@ sched_yield(void) {
 // timer interrupt wakes it up. This function never returns.
 //
 void
-sched_halt(void) {
+sched_halt(void)
+{
 	int i;
 
 	// For debugging and testing purposes, if there are no runnable
@@ -210,7 +213,9 @@ sched_halt(void) {
 
 #ifdef SCHED_PRIORITIES
 		for (int j = 0; j < total_runs; j++)
-			cprintf("env_id: %d, runs: %d\n", env_runs[j].env_id, env_runs[j].runs);
+			cprintf("env_id: %d, runs: %d\n",
+			        env_runs[j].env_id,
+			        env_runs[j].runs);
 		cprintf("Sched calls: %d\n", cicle_count);
 #endif
 
@@ -236,13 +241,13 @@ sched_halt(void) {
 
 	// Reset stack pointer, enable interrupts and then halt.
 	asm volatile("movl $0, %%ebp\n"
-		"movl %0, %%esp\n"
-		"pushl $0\n"
-		"pushl $0\n"
-		"sti\n"
-		"1:\n"
-		"hlt\n"
-		"jmp 1b\n"
-		:
-		: "a"(thiscpu->cpu_ts.ts_esp0));
+	             "movl %0, %%esp\n"
+	             "pushl $0\n"
+	             "pushl $0\n"
+	             "sti\n"
+	             "1:\n"
+	             "hlt\n"
+	             "jmp 1b\n"
+	             :
+	             : "a"(thiscpu->cpu_ts.ts_esp0));
 }

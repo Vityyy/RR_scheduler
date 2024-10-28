@@ -113,12 +113,14 @@ sys_ipc_recv(void *dstva)
 	return syscall(SYS_ipc_recv, 1, (uint32_t) dstva, 0, 0, 0, 0);
 }
 
-int sys_env_get_prior(void) 
-{  
-	return syscall(SYS_env_get_prior, 0, 0, 0, 0, 0, 0); 
-}  
+int
+sys_env_get_prior(void)
+{
+	return syscall(SYS_env_get_prior, 0, 0, 0, 0, 0, 0);
+}
 
-int sys_env_set_prior(uint32_t new_prior) 
-{  
-	return syscall(SYS_env_set_prior, 0, new_prior, 0, 0, 0, 0); 
+int
+sys_env_set_prior(uint32_t new_prior)
+{
+	return syscall(SYS_env_set_prior, 0, new_prior, 0, 0, 0, 0);
 }
