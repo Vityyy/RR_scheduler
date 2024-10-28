@@ -1,16 +1,12 @@
-name: pre-commit
-on:
-  pull_request:
-  push:
-jobs:
-  pre-commit:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: sched
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-    - uses: pre-commit/action@v2.0.3
-      with:
-        extra_args: --all-files
+fail_fast: false
+repos:
+  - repo: https://github.com/ssciwr/clang-format-hook
+    rev: v16.0.2
+    hooks:
+      - id: clang-format
+        args: [ "--style=file", "-i" ]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
